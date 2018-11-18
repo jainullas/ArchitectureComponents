@@ -15,5 +15,8 @@ interface TaskDao {
     fun insertAll(vararg task: Task)
 
     @Query("SELECT * FROM Task")
-    fun getAll() : LiveData<List<Task>>
+    fun getAll(): LiveData<List<Task>>
+
+    @Query("SELECT * FROM Task WHERE id = :taskId")
+    fun getTask(taskId: Int) : LiveData<Task>
 }
