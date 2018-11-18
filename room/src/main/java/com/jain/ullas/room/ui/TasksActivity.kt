@@ -1,5 +1,6 @@
 package com.jain.ullas.room.ui
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -30,23 +31,17 @@ class TasksActivity : AppCompatActivity() {
             adapter = taskListAdapter
             layoutManager = LinearLayoutManager(this@TasksActivity)
         }
-        refreshAllTasks()
         fab.setOnClickListener {
             addTask()
         }
 
+        //Automatically query runs in BG thread
+        taskDao.getAll().observe(this, Observer {
+            it?.forEach { taskListAdapter.addTask(it) }
+        })
 
     }
 
-    private fun refreshAllTasks() {
-        thread {
-            val allTasks = taskDao.getAll()
-            runOnUiThread {
-                allTasks.forEach { taskListAdapter.addTask(it) }
-            }
-
-        }
-    }
 
     private fun addTask() {
         val title = taskTitleInput.text.toString()
@@ -56,7 +51,6 @@ class TasksActivity : AppCompatActivity() {
         }
         thread {
             taskDao.insert(Task(title = title))
-            refreshAllTasks()
         }
         taskTitleInput.text.clear()
     }
