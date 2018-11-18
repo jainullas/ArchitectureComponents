@@ -56,6 +56,7 @@ class TasksActivity : AppCompatActivity() {
         }
         thread {
             taskDao.insert(Task(title = title))
+            refreshAllTasks()
         }
         taskTitleInput.text.clear()
     }
